@@ -1,0 +1,245 @@
+lg = 10:5:40;every_cp={};ade_x = csvread('ade_x.csv');ade_y = csvread('ade_y.csv');
+for pp = 1:length(lg)
+    gege = [];gd=lg(pp);
+    for iii = 1:36
+
+
+         y8=[];first_all=[];first7 = [];first8 = []; 
+         global ade_unique;global yy3;global Q;global first77;global act
+         global ade1;pxx=[];pyy=[];
+
+       pxx = ade_x;pyy= ade_y;
+       retweetx=[];retweety=[]; 
+       of_interest_x = pxx(:,iii) ;of_interest_y = pyy(:,iii);
+       retweetx = horzcat(retweetx,of_interest_x,[of_interest_x(2:end);of_interest_x(end)]);
+       retweety = horzcat(retweety,of_interest_y,[of_interest_y(2:end);of_interest_y(end)]);
+       pxx = horzcat(pxx,retweetx(:,2));
+       pyy = horzcat(pyy,retweety(:,2));
+
+
+       id_acc=[];id_accm=[];x_store=pxx(1,iii);y_store = pyy(1,iii);centm=[];
+
+       for ii = 1:size(pxx,1)
+               mex =  pxx(ii,:);
+               mey =  pyy(ii,:);
+               if ii==1
+                   of_interest_x = x_store;of_interest_y = y_store;
+                   max_axis = gd;
+                   xg     = [of_interest_x(1)-max_axis, of_interest_x(1)+max_axis]; 
+                   yg     = [of_interest_y(1)-max_axis, of_interest_y(1)+max_axis];                  
+                   [id_acc,cent] = grid(mex,mey,xg,yg,2*max_axis);
+                   id_accm = vertcat(id_accm,id_acc);
+                   centm = vertcat(centm,cent(37,:));
+                   id_acc=[];cent=[];
+               elseif ii>=2 && id_accm(ii-1,37)==5
+                      of_interest_x = x_store;of_interest_y = y_store;
+                      max_axis = gd;
+                      xg     = [of_interest_x(1)-max_axis, of_interest_x(1)+max_axis]; 
+                      yg     = [of_interest_y(1)-max_axis, of_interest_y(1)+max_axis]; 
+                     [id_acc,cent] = grid(mex,mey,xg,yg,2*max_axis);
+                     id_accm = vertcat(id_accm,id_acc);
+                     centm=vertcat(centm,cent(37,:));
+                     id_acc=[];cent=[];
+               elseif ii>=2 && id_accm(ii-1,37)==0  
+                   of_interest_x = mex(iii);of_interest_y = mey(iii);
+                   x_store = mex(iii);y_store = mey(iii);           
+                   max_axis = gd;
+                   xg     = [of_interest_x(1)-max_axis, of_interest_x(1)+max_axis]; 
+                   yg     = [of_interest_y(1)-max_axis, of_interest_y(1)+max_axis]; 
+                   [id_acc,cent] = grid(mex,mey,xg,yg,2*max_axis);
+                   id_accm = vertcat(id_accm,id_acc);
+                   centm=vertcat(centm,cent(37,:));
+                   id_acc=[];
+
+               else
+                   %of_interest_x = mex(iii);of_interest_y = mey(iii);
+                   ccd = centm(ii-1,:);
+                   xg1 = ccd(1);yg1 = ccd(2);
+                   x_store = xg;y_store = yg;
+                   xg     = [xg1-max_axis, xg1+max_axis]; 
+                   yg     = [yg1-max_axis, yg1+max_axis]; 
+                   [id_acc,cent] = grid(mex,mey,xg,yg,2*max_axis);
+                   id_accm = vertcat(id_accm,id_acc);
+                   centm = vertcat(centm,cent(37,:));
+                   id_acc=[];cent=[];
+                   %mex = mex(2:end);mey = mey(2:end);
+               end    
+       end
+
+
+
+      bin_state = [];bin_acc1=[];bin_acc2=[];
+
+       for i = 1:size(id_accm,1)
+         ad = id_accm(i,1:36);ad(iii)=[];
+         we = unique(ad);
+         bin_acc1 = horzcat(bin_acc1,any(we==1));
+         bin_acc1 = horzcat(bin_acc1,any(we==2));
+         bin_acc1 = horzcat(bin_acc1,any(we==3));
+         bin_acc1 = horzcat(bin_acc1,any(we==4));
+         bin_acc1 = horzcat(bin_acc1,any(we==5));
+         bin_acc1 = horzcat(bin_acc1,any(we==6));
+         bin_acc1 = horzcat(bin_acc1,any(we==7));
+         bin_acc1 = horzcat(bin_acc1,any(we==8));
+         bin_acc1 = horzcat(bin_acc1,any(we==9));
+         bin_acc2 = vertcat(bin_acc2,bin_acc1);
+         bin_acc1=[];
+       end
+
+
+
+    first77 = bin_acc2;
+    [yy1, yy2, yy3] = unique(first77(1:end,:),'rows','stable');
+    act = id_accm(:,37);
+    act(act==0)=5; 
+    ade_unique = unique(first77(1:1147,:),'rows','stable');
+    %ade_unique = unique(first77(1:305,:),'rows','stable');
+    %action = unique(act);
+    test = first77(1033:end,:);
+    %numel(find(act==0))
+    %maze1;
+    action = -9:1:9;
+
+
+    acc = [];gt=[];mex_test = ade_x(1033:end,1:end);mey_test = ade_y(1033:end,1:end);
+    id_acc_test=[]; bin_acc1=[];acc1=[];initialpo = [ade_x(1033,iii) ade_y(1033,iii)];
+    ini_state = 5;xy_acc=[];id_accm1=[];accuraccy =[];
+
+
+    % be1 = gd/3;
+    % be2 = sqrt((be1^2) +be1^2);
+
+    % retweetx=[];retweety=[]; 
+    % of_interest_x =mex_test(:,1) ;of_interest_y = mey_test(:,1);
+    % retweetx = horzcat(retweetx,of_interest_x,[of_interest_x(2:end);of_interest_x(end)]);
+    % retweety = horzcat(retweety,of_interest_y,[of_interest_y(2:end);of_interest_y(end)]);
+    % mex_test = horzcat(mex_test,retweetx(:,2));
+    % mey_test = horzcat(mey_test,retweety(:,2));
+
+    %%
+    mexx = mex_test(1,1:36);mey = mey_test(1,1:36);newx =mexx(iii);newy=mey(iii);gu = id_accm(1033:end,37);
+    x_store= mex_test(1,iii);y_store = mey_test(1,iii);mexx(iii)=[];mey(iii)=[];
+
+       for i =  1:size(mex_test,1)
+    %        xy_acc = vertcat(xy_acc,[newx newy]);
+    %        
+    %        if i>=2 && (mexx(iii)-x_store | mey(iii)-y_store)< gd/(3)
+    %                of_interest_x = x_store;of_interest_y = y_store;
+    %        else
+    %                mexx = mex_test(i,:);
+    %                mey =  mey_test(i,:);
+    %                of_interest_x = mexx(iii);of_interest_y = mey(iii);
+    %                x_store = mexx(iii);y_store = mey(iii);
+    %                %mex = mex(2:end);mey = mey(2:end);
+    %        end
+    %       
+            max_axis = gd;
+            if i==1
+              xg     = [x_store-max_axis, x_store+max_axis]; 
+              yg     = [y_store-max_axis, y_store+max_axis];
+            else
+            end
+
+    %        
+    %        
+
+           [id_acc,cent] = grid(mexx,mey,xg,yg,2*max_axis);
+           id_accm1 = vertcat(id_accm1,id_acc);
+           id_acc=[];
+
+        ad  = id_accm1(1:35);
+        we = unique(ad);  id_acc_test=[];
+        bin_acc1 = horzcat(bin_acc1,any(we==1));bin_acc1 = horzcat(bin_acc1,any(we==2));
+        bin_acc1 = horzcat(bin_acc1,any(we==3));bin_acc1 = horzcat(bin_acc1,any(we==4));
+        bin_acc1 = horzcat(bin_acc1,any(we==5));bin_acc1 = horzcat(bin_acc1,any(we==6));
+        bin_acc1 = horzcat(bin_acc1,any(we==7));bin_acc1 = horzcat(bin_acc1,any(we==8));
+        bin_acc1 = horzcat(bin_acc1,any(we==9));
+
+        gt=[];
+        [~,state_idx]=ismember(bin_acc1,ade_unique,'rows');
+        if state_idx ==1
+            [~,umax]=max(Q(state_idx,:));
+        else
+            %umax = 9;
+             for j = 1:length(ade_unique)
+                 gt = horzcat(gt, MutualInformation((bin_acc1)',(ade_unique(j,:))'));
+                 gt1 = find(gt==max(gt));
+                 gt1 = gt1(end);
+                 [~,umax]=max(Q(gt1,:));
+             end
+        end       
+        bin_acc1=[];
+        acc = vertcat(acc,action(umax)); 
+        id = ini_state + action(umax);
+        ini_state = id;
+
+        if id==gu(i)
+            accuraccy = horzcat(accuraccy ,1);
+            ini_state = id;
+        else
+            accuraccy = horzcat(accuraccy ,0);
+            ini_state = gu(i);
+        end
+        acc1=[];
+
+        mexx=[];mey=[];
+
+
+        if i<=size(mex_test,1)-1
+           mexx = mex_test(i+1,1:36);mexx(iii) = [];
+           mey = mey_test(i+1,1:36);mey(iii)   = [];
+        else
+        end
+
+       end
+       ar = sum(accuraccy)*100/(size(mex_test,1));
+      gege = vertcat(gege,ar);
+      accuraccy =[];
+
+
+    end
+every_cp{pp} = gege;
+
+end
+    every=[];
+    for i = 1:7
+       every = horzcat(every,every_cp{i}); 
+    end
+
+%%PLOT
+
+    figure
+
+    every1 = every(1:12,:);
+    hb=bar(every1);
+    ylabel('accuracy(%)')
+    xlabel('Sheep ID')
+    l = cell(1,7);
+    l{1}='20x20'; l{2}='30x30'; l{3}='40x40'; l{4}='50x50'; l{5}='60x60'; l{6}='70x70'; l{7}='80x80';    
+    legend(hb,l);
+    ylim([0 80])
+    
+    figure
+
+
+    every1 = every(13:24,:);
+    hb=bar(every1);
+    ylabel('accuracy(%)')
+    xlabel('Sheep ID')
+    l = cell(1,7);
+    l{1}='20x20'; l{2}='30x30'; l{3}='40x40'; l{4}='50x50'; l{5}='60x60'; l{6}='70x70'; l{7}='80x80';    
+    legend(hb,l);
+     ylim([0 80])
+
+
+
+    
+    figure
+    every1 = every(25:36,:);
+    hb=bar(every1);
+    ylabel('accuracy(%)')
+    xlabel('Sheep ID')
+    l = cell(1,7);
+    l{1}='20x20'; l{2}='30x30'; l{3}='40x40'; l{4}='50x50'; l{5}='60x60'; l{6}='70x70'; l{7}='80x80';    
+    legend(hb,l);
+     ylim([0 80])
