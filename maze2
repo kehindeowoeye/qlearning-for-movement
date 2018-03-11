@@ -1,0 +1,166 @@
+% function qlearning
+% 
+% %Maze where all the datasets for all agents are used in training
+% 
+% 
+% 
+% 
+% % learning parameters
+% gamma = 0.7;    % discount factor  % TODO : we need learning rate schedule
+% alpha = 0.5;    % learning rate    % TODO : we need exploration rate schedule
+% epsilon = 0.9;  % exploration probability (1-epsilon = exploit / epsilon = explore)
+% % states
+% %a = {[1:10], [1: 10],[1: 10], [1 :10],[1 :10],[1:10]};
+% %state = allcomb(a{:});
+% %state = [1,2,3,4,5,6,7,8,9,10];
+% % actions
+% %action = [1,2,3,4,5,6,7,8,9,10];
+% %action = [5,7,9,10,11,12,13,14,15,16,17,18,19,20,24,25];
+% global act
+% %action = unique(act);
+% action = -9:1:9;
+% %action = 1:9;
+% % initial Q matrix
+% global ade_unique;global yy3;global Q;global first77;
+% state = ade_unique;yy3 = yy3;
+% Q = zeros(length(state),length(action));
+% K = 20000000;     % maximum number of the iterations 
+% %state_idx = find(ismember(state,yy3(1)),1); % the initial state to begin from  find(ismember(state,yy3(1)),1)
+% [~,state_idx]=ismember(state(1,:),state,'rows');
+% t1 = 2;k = 1;
+% %% the main loop of the algorithm
+% while t1<=41213-1
+%     k = k+1;
+%     %disp(['iteration: ' num2str(k)]);
+%     r=rand; % get 1 uniform random number
+%     x=sum(r>=cumsum([0, 1-epsilon, epsilon])); % check it to be in which probability area
+%     
+%     % choose either explore or exploit
+%     if x == 1   % exploit
+%         [~,umax]=max(Q(state_idx,:));
+%         current_action = action(umax);
+%     else        % explore
+%         current_action=datasample(action,1); % choose 1 action randomly (uniform random distribution)
+%     end
+%     
+%     action_idx = find(action==current_action); % id of the chosen action
+%     %observe the next state and next reward ** there is no reward matrix
+%     [next_state,next_reward,time_step] = model(state(state_idx,:),action(action_idx),t1);
+%     %next_state_idx = find(ismember(state,next_state),1);
+% 
+%     [~,next_state_idx]= ismember(next_state,state,'rows');
+%     %next_state_idx  = ismember(next_state,state,'rows'); % id of the next state
+%     % print the results in each iteration
+%     %disp(['current state : ' num2str(state(state_idx)) ' next state : ' num2str(state(next_state_idx)) ' taken action : ' num2str(action(action_idx)) ' timestep : ' num2str((time_step))]);
+%     %disp([' next reward : ' num2str(next_reward)]);
+%     % update the Q matrix using the Q-learning rule
+%     Q(state_idx,action_idx) = Q(state_idx,action_idx) + alpha * (next_reward + gamma* max(Q(next_state_idx,:)) - Q(state_idx,action_idx));
+%     
+%     
+%     state_idx = next_state_idx;
+%     t1 = time_step;
+%     
+% end
+% end
+% 
+% %% This function is used as an observer to give the next state and the next reward using the current state and action
+% function [next_state,r,time_step] = model(x,u,t1)
+% global ade_unique
+% global ade1;global yy3;global act;global first77;global id_accm;
+% state = ade_unique;yy3 = yy3;first77 = first77;
+% if (u+act(t1-1) == act(t1))
+% 
+%     next_state = first77(t1+1,:);
+%     r = 5;time_step = t1+1;
+% else
+%     next_state = x;
+%     r = -5;time_step = t1;
+% end
+% end
+
+function qlearning
+
+%Maze where all the datasets for all agents are used in training
+
+
+
+
+% learning parameters
+gamma = 0.7;    % discount factor  % TODO : we need learning rate schedule
+alpha = 0.5;    % learning rate    % TODO : we need exploration rate schedule
+epsilon = 0.9;  % exploration probability (1-epsilon = exploit / epsilon = explore)
+% states
+%a = {[1:10], [1: 10],[1: 10], [1 :10],[1 :10],[1:10]};
+%state = allcomb(a{:});
+%state = [1,2,3,4,5,6,7,8,9,10];
+% actions
+%action = [1,2,3,4,5,6,7,8,9,10];
+%action = [5,7,9,10,11,12,13,14,15,16,17,18,19,20,24,25];
+global act
+%action = unique(act);
+action = -9:1:9;
+%action = 1:9;
+% initial Q matrix
+global ade_unique;global yy3;global Q;global first77;global Qprob;
+state = ade_unique;yy3 = yy3;
+Q = zeros(length(state),length(action));
+Qprob = cell(size(ade_unique,1),1);
+
+
+K = 20000000;     % maximum number of the iterations 
+%state_idx = find(ismember(state,yy3(1)),1); % the initial state to begin from  find(ismember(state,yy3(1)),1)
+[~,state_idx]=ismember(state(1,:),state,'rows');
+t1 = 2;k = 1;
+%% the main loop of the algorithm
+while t1<=41213-1
+    k = k+1;
+    %disp(['iteration: ' num2str(k)]);
+    r=rand; % get 1 uniform random number
+    x=sum(r>=cumsum([0, 1-epsilon, epsilon])); % check it to be in which probability area
+    
+    % choose either explore or exploit
+    if x == 1   % exploit
+        [~,umax]=max(Q(state_idx,:));
+        current_action = action(umax);
+    else        % explore
+        current_action=datasample(action,1); % choose 1 action randomly (uniform random distribution)
+    end
+    
+    action_idx = find(action==current_action); % id of the chosen action
+    %observe the next state and next reward ** there is no reward matrix
+    [next_state,next_reward,time_step] = model(state(state_idx,:),action(action_idx),t1);
+    %next_state_idx = find(ismember(state,next_state),1);
+
+    [~,next_state_idx]= ismember(next_state,state,'rows');
+    %next_state_idx  = ismember(next_state,state,'rows'); % id of the next state
+    % print the results in each iteration
+    %disp(['current state : ' num2str(state(state_idx)) ' next state : ' num2str(state(next_state_idx)) ' taken action : ' num2str(action(action_idx)) ' timestep : ' num2str((time_step))]);
+    %disp([' next reward : ' num2str(next_reward)]);
+    % update the Q matrix using the Q-learning rule
+    Q(state_idx,action_idx) = Q(state_idx,action_idx) + alpha * (next_reward + gamma* max(Q(next_state_idx,:)) - Q(state_idx,action_idx));
+    
+    
+    state_idx = next_state_idx;
+    t1 = time_step;
+    
+end
+end
+
+%% This function is used as an observer to give the next state and the next reward using the current state and action
+function [next_state,r,time_step] = model(x,u,t1)
+global ade_unique;hg = [];state = ade_unique;
+global ade1;global yy3;global act;global first77;global id_accm;
+state = ade_unique;yy3 = yy3;first77 = first77;global Qprob;global action;yu=[];
+ if (u+act(t1-1) == act(t1))
+    action = -9:1:9;
+    next_state = first77(t1+1,:);
+    r = 5;time_step = t1+1; 
+    [~,rt]= ismember(x,state,'rows'); 
+    Qprob{rt,1} = horzcat(Qprob{rt,1},find(action==u));
+
+    
+ else
+    next_state = x;
+    r = -5;time_step = t1;
+ end
+end
