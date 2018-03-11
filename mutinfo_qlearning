@@ -1,0 +1,55 @@
+% - Build grid. 
+nBinsX = 12; 
+nBinsY = 12; 
+xg     = linspace(-516.0693, -328.8566, nBinsX+1 ) ; 
+yg     = linspace(35.5036,191.4384, nBinsY+1 ) ; 
+nCells = nBinsX * nBinsY ; 
+
+% - Build figure. 
+%figure(1) ;  clf ;  hold on ; 
+%set( gcf, 'Color', 'w', 'Units', 'Normalized', ... 
+      %'Position', [0.1,0.1,0.6,0.6] ); 
+
+% - Plot grid. 
+plot( [xg;xg], repmat( [-516.0693;-328.8566], 1, numel(xg)), 'Color', 0.8*[1,1,1]) ; 
+plot( repmat( [35.5036;191.4384], 1, numel( yg )), [yg;yg], 'Color', 0.8*[1,1,1] ) ; 
+xlim([-516.0693, -328.8566] ) ;  ylim([35.5036,191.4384] ) ; 
+
+% - Plot cell IDs. 
+labels = arrayfun( @(k)sprintf( '%d', k ), 1:nCells, 'UniformOutput', false ) ; 
+[X,Y]  = meshgrid( (xg(1:end-1)+xg(2:end))/2, (yg(1:end-1)+yg(2:end))/2 ) ; 
+text( X(:), Y(:), labels, 'Color', 'b', 'FontSize', 10 ) ; 
+
+
+
+
+m = []; 
+m1 = [];m2 = []; 
+a1 = 0:61200:length(AA); 
+a1 = a1(2:length(a1)); 
+nn = [];px = [];py = [];a2 = 1;newly_swept_areas=[]; 
+
+
+for j = 1:length(a1)
+      for i = a2:a1(j) 
+         x = AA(i,1);y = AA(i,2); 
+         m1 = vertcat(m1,x);m2 = vertcat(m2,y); 
+      end 
+    px = horzcat(px,m1); py = horzcat(py,m2); 
+    m1 = [];m2 = []; 
+    a2 = a1(j)+1; 
+end 
+
+     
+    idacc = [];newly_swept_areas=[]; 
+% - Build set of unique IDs for cells. 
+for j = 1:length(LSG)
+    xId = sum(bsxfun( @ge, (px(:,j)), xg(1:end-1) ), 2 ) ; 
+    yId = sum(bsxfun( @ge, (py(:,j)), yg(1:end-1) ), 2 ) ; 
+    cellId = nBinsY * (xId - 1) + yId ; 
+    idacc = horzcat(idacc,cellId); 
+end 
+
+
+
+plot(px,py)
