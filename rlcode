@@ -1,0 +1,71 @@
+uu = LSG(:,6); uu1 = find(uu==1); u11 = LSG(:,2); u12 = u11(uu1); 
+b = LSG(:,2);yme = [];y8=[];c = idacc;first_all=[];first7 = [];first8 = []; 
+global ade_unique;global yy3;global Q;global first77;global act;pxx=[];pyy=[];
+global ade1;
+ 
+for i = 1:length(u12) 
+   yme = vertcat(yme, find(b==u12(i))); 
+end 
+ 
+for i = 1:length(yme) 
+    px1 = px(:,yme(i)); 
+    pxx = horzcat(pxx,px1); 
+end 
+ 
+for i = 1:length(yme) 
+    px1 = py(:,yme(i)); 
+    pyy = horzcat(pyy,px1); 
+end 
+ 
+% - Build grid. 
+nBinsX = 3; 
+nBinsY = 3 ;
+of_interest_x = pxx(:,1);of_interest_y = pyy(:,1);m = 1;
+idacc_all={};idacc_new = [];ade_new=[];ade_new_all={}; 
+retweetx = horzcat(retweetx,of_interest_x,[of_interest_x(2:end);of_interest_x(end)]);
+retweety = horzcat(retweety,of_interest_y,[of_interest_y(2:end);of_interest_y(end)]);
+ 
+ 
+for ii = 1:length(m)
+ 
+  for i = 1:length(of_interest_x)
+ 
+     xg     = linspace(of_interest_x(i)-m(ii), of_interest_x(i)+m(ii), nBinsX+1 ) ; 
+     yg     = linspace(of_interest_y(i)-m(ii), of_interest_y(i)+m(ii), nBinsY+1 ) ; 
+     nCells = nBinsX * nBinsY ; 
+ 
+ 
+   
+     xlim([of_interest_x(i)-m(ii), of_interest_x(i)+m(ii)]) ;  ylim([of_interest_y(i)-m(ii), of_interest_y(i)+m(ii)] ) ; 
+ 
+     % - Plot cell IDs. 
+     labels = arrayfun( @(k)sprintf( '%d', k ), 1:nCells, 'UniformOutput', false ) ; 
+     [X,Y]  = meshgrid( (xg(1:end-1)+xg(2:end))/2, (yg(1:end-1)+yg(2:end))/2 ); 
+     text( X(:), Y(:), labels, 'Color', 'b', 'FontSize', 10 ) ; 
+ 
+ 
+ 
+     
+    
+    % - Build set of unique IDs for cells. 
+   %for j = 1:length(of_interest_x)
+     xId = sum(bsxfun(@ge, (pxx(i,:))', xg(1:end-1)), 2) ; 
+     yId = sum(bsxfun(@ge, (pyy(i,:))', yg(1:end-1)), 2) ; 
+     cellId = nBinsY * (xId - 1) + yId ; 
+     idacc_new = vertcat(idacc_new,cellId'); 
+     
+     %The code to get the action
+     xId1 = sum(bsxfun(@ge, (retweetx(i,:))', xg(1:end-1)), 2) ; 
+     yId1 = sum(bsxfun(@ge, (retweety(i,:))', yg(1:end-1)), 2) ; 
+     meId = nBinsY * (xId1 - 1) + yId1; 
+     ade_new = vertcat(ade_new, meId'); 
+
+ 
+  end
+  idacc_all{ii} = idacc_new;
+  ade_new_all{ii}= ade_new;
+ 
+  idacc_new=[];ade_new=[];
+end
+
+
