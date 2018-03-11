@@ -1,0 +1,169 @@
+uu = LSG(:,6); uu1 = find(uu==1); u11 = LSG(:,2); u12 = u11(uu1); 
+b = LSG(:,2);yme = [];y8=[];c = idacc;first_all=[];first7 = [];first8 = []; 
+global ade_unique;global yy3;global Q;global first77;global act;pxx=[];pyy=[];
+global ade1;
+ 
+for i = 1:length(u12) 
+   yme = vertcat(yme, find(b==u12(i))); 
+end 
+ 
+for i = 1:length(yme) 
+    px1 = px(:,yme(i)); 
+    pxx = horzcat(pxx,px1); 
+end 
+ 
+for i = 1:length(yme) 
+    px1 = py(:,yme(i)); 
+    pyy = horzcat(pyy,px1); 
+end 
+ 
+% - Build grid. 
+nBinsX = 3; 
+nBinsY = 3;
+m = 2.8;retweetx=[];retweety=[]; 
+of_interest_x =pxx(:,1) ;of_interest_y =pyy(:,1);
+retweetx = horzcat(retweetx,of_interest_x,[of_interest_x(2:end);of_interest_x(end)]);
+retweety = horzcat(retweety,of_interest_y,[of_interest_y(2:end);of_interest_y(end)]);
+pxx = horzcat(pxx,retweetx(:,2));
+pyy = horzcat(pyy,retweety(:,2));
+
+
+
+
+id_acc=[];id_accm=[];
+for ii = 1:size(pxx,1)
+    
+mex = pxx(ii,:);
+mey = pyy(ii,:);
+
+of_interest_x = mex(:,1);of_interest_y = mey(:,1);
+xg     = linspace(of_interest_x-m, of_interest_x+m, nBinsX+1); 
+yg     = linspace(of_interest_y-m, of_interest_y+m, nBinsY+1); 
+
+ for tt = 1:length(mex)
+     if (mex(tt)>=xg(1) && mex(tt)<xg(2)) && (mey(tt)>=yg(1) && mey(tt)<yg(2))
+         id=1;
+     elseif (mex(tt)>=xg(2) && mex(tt)< xg(3))  && (mey(tt)>=yg(1) && mey(tt)<yg(2))
+         id=2;
+     elseif mex(tt)>=xg(3)&&  mex(tt)<xg(4)  && (mey(tt)>=yg(1) && mey(tt)<yg(2))
+          id=3;
+     elseif mex(tt)>=xg(1) && mex(tt)<xg(2) && (mey(tt)>=yg(2) && mey(tt)<yg(3))
+         id=4;
+     elseif mex(tt)>=xg(2) && mex(tt)< xg(3)  && (mey(tt)>=yg(2) && mey(tt)<yg(3))
+         id=5;
+     elseif mex(tt)>=xg(3)&&mex(tt)<xg(4)  &&   (mey(tt)>=yg(2) && mey(tt)<yg(3))
+         id=6;
+     elseif mex(tt)>=xg(1) && mex(tt)<xg(2) && (mey(tt)>=yg(3) && mey(tt)<yg(4))
+         id=7;
+     elseif mex(tt)>=xg(2) && mex(tt)< xg(3)  && (mey(tt)>=yg(3) && mey(tt)<yg(4))
+         id=8;
+     elseif (mex(tt)>=xg(3) && mex(tt)<xg(4))  && (mey(tt)>=yg(3) && mey(tt)<yg(4))
+         id=9;
+     else
+         id=0;
+     end
+      id_acc = horzcat(id_acc,id);
+ end
+      id_accm = vertcat(id_accm,id_acc);
+      id_acc=[];
+end
+     
+
+
+bin_state = [];bin_acc1=[];bin_acc2=[];
+for i = 1:size(id_accm,1)
+    we = unique(id_accm(i,2:36));
+    bin_acc1 = horzcat(bin_acc1,any(we==1));
+    bin_acc1 = horzcat(bin_acc1,any(we==2));
+    bin_acc1 = horzcat(bin_acc1,any(we==3));
+    bin_acc1 = horzcat(bin_acc1,any(we==4));
+    bin_acc1 = horzcat(bin_acc1,any(we==5));
+    bin_acc1 = horzcat(bin_acc1,any(we==6));
+    bin_acc1 = horzcat(bin_acc1,any(we==7));
+    bin_acc1 = horzcat(bin_acc1,any(we==8));
+    bin_acc1 = horzcat(bin_acc1,any(we==9));
+    bin_acc2 = vertcat(bin_acc2,bin_acc1);
+    bin_acc1=[];
+       
+end
+
+first77 = bin_acc2;
+
+[yy1, yy2, yy3] = unique(first77(1:55080,:),'rows','stable');
+
+act = id_accm(:,37);
+ade_unique = unique(first77(1:55080,:),'rows','stable');
+%action = unique(act);
+test = first77(55081:end,:);
+
+
+act = id_accm(:,37);
+numel(find(act==0))
+
+maze1;
+
+
+
+
+
+
+
+
+
+acc = [];gt=[];mex_test = pxx(55080:end,1:36);mey_test = pyy(55080:end,1:36);m=0.5;
+id_acc_test=[];
+for i =  1:6121 
+       of_interest_x = mex_test(i,:);of_interest_y = mey_test(i,:);
+       xg     = linspace(of_interest_x(1)-m, of_interest_x(1)+m, nBinsX+1); 
+       yg     = linspace(of_interest_y(1)-m, of_interest_y(1)+m, nBinsY+1); 
+       
+   for tt = 1:length(of_interest_x)
+     if (mof_interest_x(tt)>=xg(1) && of_interest_x(tt)<xg(2)) && (of_interest_y(tt)>=yg(1) && of_interest_y(tt)<yg(2))
+         id=1;
+     elseif (of_interest_x(tt)>=xg(2) && of_interest_x(tt)< xg(3))  && (of_interest_y(tt)>=yg(1) && of_interest_y(tt)<yg(2))
+         id=2;
+     elseif of_interest_x(tt)>=xg(3)&&  of_interest_x(tt)<xg(4)  && (of_interest_y(tt)>=yg(1) && of_interest_y(tt)<yg(2))
+          id=3;
+     elseif of_interest_x(tt)>=xg(1) && of_interest_x(tt)<xg(2) && (of_interest_y(tt)>=yg(2) && of_interest_y(tt)<yg(3))
+         id=4;
+     elseif of_interest_x(tt)>=xg(2) && of_interest_x(tt)< xg(3)  && (of_interest_y(tt)>=yg(2) && of_interest_y(tt)<yg(3))
+         id=5;
+     elseif of_interest_x(tt)>= xg(3)&& of_interest_x(tt)<xg(4)  &&   (of_interest_y(tt)>=yg(2) && of_interest_y(tt)<yg(3))
+         id=6;
+     elseif of_interest_x(tt)>= xg(1) && of_interest_x(tt)<xg(2) && (of_interest_y(tt)>=yg(3) && of_interest_y(tt)<yg(4))
+         id=7;
+     elseif of_interest_x(tt)>= xg(2) && of_interest_x(tt)< xg(3)  && (of_interest_y(tt)>=yg(3) && of_interest_y(tt)<yg(4))
+         id=8;
+     elseif (of_interest_x(tt)>= xg(3) && of_interest_x(tt)<xg(4))  && (of_interest_y(tt)>=yg(3) && of_interest_y(tt)<yg(4))
+         id=9;
+     else
+         id=0;
+     end
+      id_acc_test = horzcat(id_acc_test,id);
+   end
+       
+       [~,state_idx]=ismember(test(i,:),ade_unique,'rows');
+       [~,umax]=max(Q(state_idx,:));
+       acc = vertcat(acc,action(umax));
+end
+
+ab = acc-act(55081:end);
+acu = length(find(ab==0));
+accuracy = acu/6120;accuracy = accuracy*100;
+
+    bin_acc1=[];bin_acc2=[];
+
+    we = unique(id_acc_test);
+    bin_acc1 = horzcat(bin_acc1,any(we==1));
+    bin_acc1 = horzcat(bin_acc1,any(we==2));
+    bin_acc1 = horzcat(bin_acc1,any(we==3));
+    bin_acc1 = horzcat(bin_acc1,any(we==4));
+    bin_acc1 = horzcat(bin_acc1,any(we==5));
+    bin_acc1 = horzcat(bin_acc1,any(we==6));
+    bin_acc1 = horzcat(bin_acc1,any(we==7));
+    bin_acc1 = horzcat(bin_acc1,any(we==8));
+    bin_acc1 = horzcat(bin_acc1,any(we==9));
+    bin_acc1=[];
+       
+
+
