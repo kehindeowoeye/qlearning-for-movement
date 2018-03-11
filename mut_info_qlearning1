@@ -1,0 +1,193 @@
+A = []; 
+A_time = []; 
+for i = 1:length(obs_indicator)
+   x = trajectory_matrix(1:2,1:length(obs_indicator),i); 
+   x1 = x'; 
+   c = LSG(:,1);c1 = c(i); c2 = repmat(c1,1,length(obs_indicator));c2 = c2'; 
+   d = LSG(:,2);d1 = d(i); d2 = repmat(d1,1,length(obs_indicator));d2 = d2'; 
+   e = LSG(:,3);e1 = e(i); e2 = repmat(e1,1,length(obs_indicator));e2 = e2'; 
+   f = LSG(:,4);f1 = f(i); f2 = repmat(f1,1,length(obs_indicator));f2 = f2'; 
+   g = LSG(:,5);g1 = g(i); g2 = repmat(g1,1,length(obs_indicator));g2 = g2'; 
+   h = LSG(:,6);h1 = h(i); h2 = repmat(h1,1,length(obs_indicator));h2 = h2'; 
+   k = LSG(:,7);k1 = k(i); k2 = repmat(k1,1,length(obs_indicator));k2 = k2'; 
+   t1 = datetime(time_matrix(1,:)); 
+   t2 = datetime(time_matrix(2,:)); 
+   t =  t1:hours(1/3600):t2; 
+   B = horzcat(x1,c2,d2,e2,f2,g2,h2,k2); 
+   A = vertcat(A,B); 
+   A_time = vertcat(A_time,t); 
+   B = []; 
+end 
+
+A1 = (reshape(A_time',1,[]))'; 
+A = horzcat(A, datevec(A1)); 
+%A2 = find(A1==datetime([2016,04,1,17,00,00])); 
+A2 = find(A1==datetime([2016,04,04,10,00,00])); 
+
+AK = []; 
+AA = []; 
+for i = 1:length(A2) 
+    for j = A2(i):A2(i)+71199
+    %for j = A2(i):A2(i)+61199 
+        AK = vertcat(AK,A(j,1:15)); 
+    end 
+    AA = vertcat(AA,AK); 
+    AK = []; 
+end 
+
+ 
+
+
+%rectangle('Position',[170.82 66.21 77.31 83.65]) 
+
+
+% - Build grid. 
+nBinsX = 10 ; 
+nBinsY = 5 ; 
+xg     = linspace(170.82, 261.71, nBinsX+1 ) ; 
+yg     = linspace(66.21, 162.36, nBinsY+1 ) ; 
+nCells = nBinsX * nBinsY ; 
+
+% - Build figure. 
+%figure(1) ;  clf ;  hold on ; 
+%set( gcf, 'Color', 'w', 'Units', 'Normalized', ... 
+      %'Position', [0.1,0.1,0.6,0.6] ); 
+
+% - Plot grid. 
+plot( [xg;xg], repmat( [170.82;261.71], 1, numel(xg)), 'Color', 0.8*[1,1,1]) ; 
+plot( repmat( [66.21;162.36], 1, numel( yg )), [yg;yg], 'Color', 0.8*[1,1,1] ) ; 
+xlim([170.82, 261.71] ) ;  ylim([66.21, 162.36] ) ; 
+
+% - Plot cell IDs. 
+labels = arrayfun( @(k)sprintf( '%d', k ), 1:nCells, 'UniformOutput', false ) ; 
+[X,Y]  = meshgrid( (xg(1:end-1)+xg(2:end))/2, (yg(1:end-1)+yg(2:end))/2 ) ; 
+text( X(:), Y(:), labels, 'Color', 'b', 'FontSize', 10 ) ; 
+
+
+
+
+m = []; 
+m1 = [];m2 = []; 
+a1 = 0:71200:length(AA); 
+a1 = a1(2:length(a1)); 
+nn = [];px = [];py = [];a2 = 1;newly_swept_areas=[]; 
+
+
+for j = 1:length(a1); 
+      for i = a2:a1(j); 
+         x = AA(i,1);y = AA(i,2); 
+         m1 = vertcat(m1,x);m2 = vertcat(m2,y); 
+      end 
+    px = horzcat(px,m1); py = horzcat(py,m2); 
+    m1 = [];m2 = []; 
+    a2 = a1(j)+1; 
+end 
+   xlswrite('0404ax',px(1:40000,:));xlswrite('0404bx',px(40001:end,:));
+   xlswrite('0404ay',py(1:40000,:));xlswrite('0404by',py(40001:end,:));  
+    idacc = [];newly_swept_areas=[]; 
+% - Build set of unique IDs for cells. 
+for j = 1:length(LSG); 
+    xId = sum(bsxfun( @ge, (px(:,j)), xg(1:end-1) ), 2 ) ; 
+    yId = sum(bsxfun( @ge, (py(:,j)), yg(1:end-1) ), 2 ) ; 
+    cellId = nBinsY * (xId - 1) + yId ; 
+    idacc = horzcat(idacc,cellId); 
+    newly_swept_areas = [newly_swept_areas;numel(unique(cellId))];%no of unique areas visited 
+end 
+
+m = []; 
+m1 = []; 
+a10 = 0:60:length(cellId(:,1)); 
+a10 = a10(2:length(a10)); 
+
+nn = []; 
+for k = 1:length(LSG) 
+    a21 = 1;
+    cd = idacc(:,k);
+    for j = 1:length(a10); 
+         tr = numel(unique(cd(a21:a10(j)))); 
+         m = vertcat(m,tr); 
+         a21 = a10(j)+1; 
+    end 
+    m1 = horzcat(m1,m);
+    m = []; 
+end 
+
+plot(px,py)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%rectangle('Position',[170.82 66.21 77.31 83.65]) 
+% 
+% 
+% % - Build grid. 
+% nBinsX = 10 ; 
+% nBinsY = 10 ; 
+% xg     = linspace(264.95, 546.91, nBinsX+1 ) ; 
+% yg     = linspace(154.73, 300.09, nBinsY+1 ) ; 
+% nCells = nBinsX * nBinsY ; 
+% 
+% % - Build figure. 
+% %figure(1) ;  clf ;  hold on ; 
+% %set( gcf, 'Color', 'w', 'Units', 'Normalized', ... 
+%       %'Position', [0.1,0.1,0.6,0.6] ); 
+% 
+% % - Plot grid. 
+% plot( [xg;xg], repmat( [264.95;546.91], 1, numel(xg)), 'Color', 0.8*[1,1,1]) ; 
+% plot( repmat( [154.73;300.09], 1, numel( yg )), [yg;yg], 'Color', 0.8*[1,1,1] ) ; 
+% xlim([264.95, 546.91] ) ;  ylim([154.73, 300.09] ) ; 
+% 
+% % - Plot cell IDs. 
+% labels = arrayfun( @(k)sprintf( '%d', k ), 1:nCells, 'UniformOutput', false ) ; 
+% [X,Y]  = meshgrid( (xg(1:end-1)+xg(2:end))/2, (yg(1:end-1)+yg(2:end))/2 ) ; 
+% text( X(:), Y(:), labels, 'Color', 'b', 'FontSize', 10 ) ; 
+% 
+% 
+% 
+% % 
+% m = []; 
+% m1 = [];m2 = []; 
+% a1 = 0:39600:length(AA); 
+% a1 = a1(2:length(a1)); 
+% nn = [];px = [];py = [];a2 = 1;newly_swept_areas=[]; 
+% 
+% 
+% for j = 1:length(a1); 
+%       for i = a2:a1(j); 
+%          x = AA(i,1);y = AA(i,2); 
+%          m1 = vertcat(m1,x);m2 = vertcat(m2,y); 
+%       end 
+%     px = horzcat(px,m1); py = horzcat(py,m2); 
+%     m1 = [];m2 = []; 
+%     a2 = a1(j)+1; 
+% end 
+% 
+%      
+%     idacc = [];newly_swept_areas=[]; 
+% % - Build set of unique IDs for cells. 
+% for j = 1:length(LSG); 
+%     xId = sum(bsxfun( @ge, (px(:,j)), xg(1:end-1) ), 2 ) ; 
+%     yId = sum(bsxfun( @ge, (py(:,j)), yg(1:end-1) ), 2 ) ; 
+%     cellId = nBinsY * (xId - 1) + yId ; 
+%     idacc = horzcat(idacc,cellId); 
+%     newly_swept_areas = [newly_swept_areas;numel(unique(cellId))];%no of unique areas visited 
+% end 
+% 
+% m = []; 
+% m1 = []; 
+% a10 = 0:300:length(cellId(:,1)); 
+% a10 = a10(2:length(a10)); 
+% 
+% nn = []; 
+% for k = 1:length(LSG) 
+%     a21 = 1;
+%     cd = idacc(:,k);
+%     for j = 1:length(a10); 
+%          tr = numel(unique(cd(a21:a10(j)))); 
+%          m = vertcat(m,tr); 
+%          a21 = a10(j)+1; 
+%     end 
+%     m1 = horzcat(m1,m);
+%     m = []; 
+% end 
+% 
+% plot(px,py)
