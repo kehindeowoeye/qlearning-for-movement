@@ -1,0 +1,345 @@
+
+
+%Code for sick sheep considered all alaone
+
+
+
+
+
+uni_ade={};q_x={};uni_ade_test={};te_result_all={};unique_every={};test_acca={};test_acc =[];act1=[];actall={};bin_first={};
+
+ 
+
+ 
+
+ control = [2 7 13 15 17 20 21 22 23 26 30 31 32];
+
+ sick = [1 3 4 5 6 8 9 10 11 12 13 14 16 18 24 25 27 28 29 33 34 35 36];
+
+
+
+all_cp={};ade_x = csvread('ade_x.csv');ade_y = csvread('ade_y.csv');sav_all={};ig_all=[];bin_first_all={};act2=[];
+ade_x = ade_x(:,sick);ade_y = ade_y(:,sick);
+%ade_x = ade_x(1:6,:);ade_y=ade_y(1:6,:);
+
+vc=[];vc1=[];global vv;vv = [];vc1=[];vc2=[];vc3=[];v4=[];vl=[];global Qprob;lab=[];
+
+ 
+
+for ty = 1:1
+
+    
+
+    lg = [3 6 12 24 48 96];
+
+   
+
+   
+
+    every_cp={};
+
+    for pp = 1:length(lg)
+
+            gege = [];gd=lg(pp);sav=[];te_result=[];reb1={};reb=[];
+
+            for iii = 1:23
+
+                   y8=[];first_all=[];first7 = [];first8 = [];id=[];
+
+                   global ade_unique;global yy3;global Q;global first77;global act;
+
+                   global ade1;pxx=[];pyy=[];             
+
+                   pxx = ade_x;pyy= ade_y;retweetx=[];retweety=[]; 
+
+                   of_interest_x = pxx(:,iii);of_interest_y = pyy(:,iii);
+
+                   retweetx = horzcat(retweetx,of_interest_x,[of_interest_x(2:end);of_interest_x(end)]);
+
+                   retweety = horzcat(retweety,of_interest_y,[of_interest_y(2:end);of_interest_y(end)]);
+
+                   pxx = horzcat(pxx,retweetx(:,2));pyy = horzcat(pyy,retweety(:,2));
+
+ 
+
+                   id_acc=[];id_accm=[];x_store=pxx(1,iii);y_store = pyy(1,iii);centm=[];
+
+                   for ii = 1:size(pxx,1)
+
+                           mex1 =  pxx(ii,:);
+
+                           mey =   pyy(ii,:);
+
+                           if ii==1
+
+                               of_interest_x = x_store;of_interest_y = y_store;   
+
+                               v4 = vertcat(v4,[x_store y_store]);
+
+                               max_axis = gd;
+
+                               xg     = [of_interest_x(1)-max_axis, of_interest_x(1)+max_axis]; 
+
+                               yg     = [of_interest_y(1)-max_axis, of_interest_y(1)+max_axis];                        
+
+                               [id_acc,cent] = grid1(mex1,mey,xg,yg,2*max_axis);
+
+                               id_accm = vertcat(id_accm,id_acc);
+
+                               centm = vertcat(centm,cent(24,:));
+
+                               id_acc=[];cent=[];
+
+                           elseif ii>=2 && id_accm(ii-1,24)==5
+
+                                  vc3 = vertcat(vc3,id_accm(ii-1,24));
+
+                                  of_interest_x = x_store;of_interest_y = y_store; 
+
+                                  v4 = vertcat(v4,[x_store y_store]);
+
+                                  max_axis = gd;
+
+                                 xg     = [of_interest_x(1)-max_axis, of_interest_x(1)+max_axis]; 
+
+                                 yg     = [of_interest_y(1)-max_axis, of_interest_y(1)+max_axis]; 
+
+                                 [id_acc,cent] = grid1(mex1,mey,xg,yg,2*max_axis);
+
+                                 id_accm = vertcat(id_accm,id_acc);
+
+                                 centm   = vertcat(centm,cent(24,:));
+
+                                 id_acc=[];cent=[];
+
+                           elseif ii>=2 && id_accm(ii-1,24)==0  
+
+                               of_interest_x = mex1(iii);of_interest_y = mey(iii);
+
+                               vc2 = vertcat(vc2,id_accm(ii-1,24));                        
+
+                               %of_interest_x = mex1(ii);of_interest_y = mey(ii);                          
+
+                               x_store = mex1(iii);y_store = mey(iii);           
+
+                               %x_store = mex1(ii);y_store = mey(ii);  
+
+                               v4 = vertcat(v4,[x_store y_store]);
+
+                               max_axis = gd;
+
+                               xg     = [of_interest_x(1)-max_axis, of_interest_x(1)+max_axis]; 
+
+                               yg     = [of_interest_y(1)-max_axis, of_interest_y(1)+max_axis]; 
+
+                               [id_acc,cent] = grid1(mex1,mey,xg,yg,2*max_axis);
+
+                               id_accm = vertcat(id_accm,id_acc);centm = vertcat(centm,cent(24,:));
+
+                               id_acc=[];
+
+                          else
+
+                               %of_interest_x = mex(iii);of_interest_y = mey(iii);
+
+                               vc = vertcat(vc,ii);vc1 = vertcat(vc1,id_accm(ii-1,24)); 
+
+                               ccd = centm(ii-1,:);max_axis = gd;                        
+
+                               %xg1 = ccd(1);yg1 = ccd(2);
+
+                               xg1 = mex1(iii);yg1= mey(iii);                                                 
+
+                               %x_store = xg;y_store = yg;
+
+                               x_store = xg1;y_store = yg1;
+
+                               v4 = vertcat(v4,[x_store y_store]);
+
+                               xg     = [xg1-max_axis, xg1+max_axis]; 
+
+                               yg     = [yg1-max_axis, yg1+max_axis]; 
+
+                               [id_acc,cent] = grid1(mex1,mey,xg,yg,2*max_axis);
+
+ 
+
+                               id_accm = vertcat(id_accm,id_acc);
+
+                               centm = vertcat(centm,cent(24,:));
+
+                               id_acc=[];cent=[];
+
+                               %mex = mex(2:end);mey = mey(2:end);
+
+                           end    
+
+                   end
+
+                   
+
+                  bin_state = [];bin_acc1=[];bin_acc2=[];
+
+                       frata = [0 0 0 0 0 0 0 0 0];
+
+                       
+
+                       for i = 1:size(id_accm,1)
+
+                             ad = id_accm(i,1:23);ad(iii)=[];
+
+                             
+
+                             ad = ad(ad~=0);
+
+                             wawo = (histc(ad,1:9));lab = vertcat(lab,wawo);
+
+                             we  = abs(minus(wawo,frata));
+
+                             frata = wawo;
+
+                             
+
+                             %we = unique(ad);
+
+                            
+
+                            for uu = 1:9                                                                                                 
+
+                                 if we(uu)>=2
+
+                                     bin_acc1 = horzcat(bin_acc1,1);
+
+                                   
+
+                                 elseif we(uu)>=2
+
+                                     bin_acc1 = horzcat(bin_acc1,1);
+
+                                   
+
+                                 elseif we(uu)>=2
+
+                                     bin_acc1 = horzcat(bin_acc1,1);
+
+                                  
+
+                                 elseif we(uu)>=2
+
+                                     bin_acc1 = horzcat(bin_acc1,1);
+
+                                     
+
+                                 elseif we(uu)>=2
+
+                                     bin_acc1 = horzcat(bin_acc1,1);
+
+                                    
+
+                                 elseif we(uu)>=2
+
+                                     bin_acc1 = horzcat(bin_acc1,1);
+
+                                     
+
+                                 elseif we(uu)>=2
+
+                                     bin_acc1 = horzcat(bin_acc1,1);
+
+                                     
+
+                                 elseif we(uu)>=2
+
+                                     bin_acc1 = horzcat(bin_acc1,1);
+
+                                     
+
+                                 elseif we(uu)>=2
+
+                                     bin_acc1 = horzcat(bin_acc1,1);
+
+                                    
+
+                                 else
+
+                                     bin_acc1 = horzcat(bin_acc1,0);
+
+                                 end
+
+                                  
+
+                            end
+
+                             bin_acc2 = vertcat(bin_acc2,bin_acc1);
+
+                             bin_acc1=[];
+
+                       end
+
+ 
+
+                    first77 = bin_acc2;
+
+                    bin_first{iii} = first77;                 
+
+                    act = id_accm(:,24);
+
+                   
+
+                    act1 = horzcat(act1,act);
+
+                    
+
+                    act2 = horzcat(act2,id_accm(:,iii));
+
+                    ade_unique = unique(first77(1:end,:),'rows','stable');                 
+
+                    action = -5:1:4;   
+
+                    q_x{iii} = Q;             
+
+                    uni_ade{iii} = ade_unique;                                      
+
+                    bin_acc1=[];                                   
+
+                    ig_all = vertcat(ig_all,ade_unique);      
+
+ 
+
+           end% end for individual
+
+         
+
+         
+
+     sav_all{pp}= sum(sav);te_result_all{pp} = te_result;
+
+     unique_every{pp}= ig_all;%all_states
+
+     test_acca{pp} = test_acc;actall{pp}=act1;actall1{pp}= act2; bin_first_all{pp} = bin_first; 
+
+     bin_first={};
+
+     act1=[];act2=[];
+
+     test_acc={};
+
+     ig_all=[];
+
+ 
+
+    end
+
+    
+
+ 
+
+    %all_cp{ty} = every;
+
+end
+
+ 
+
+ 
+
+ 
