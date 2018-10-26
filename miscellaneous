@@ -1,0 +1,17 @@
+% Gets the percentage of times agent moved out of grid and also the no of times it remained in 
+% same position 
+
+
+taco = [];taco1=[];
+for i = 1:6
+    rt = actall{1,i};talo = rt(:);
+    m1 = numel(find(talo==5))/(numel(talo)-numel(find(talo==0)));taco = horzcat(taco,m1);
+    m2 = numel(find(talo==5))/numel(talo);taco1 = horzcat(taco1,m2);
+end
+
+taco = [];
+for i = 1:6
+    rt = actall{1,i};talo = rt(:);
+    m1 = numel(find(talo==0))/(numel(talo));taco = horzcat(taco,m1);
+   
+end
